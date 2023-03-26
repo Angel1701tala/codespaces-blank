@@ -1,0 +1,55 @@
+import java.util.*;
+
+public class panqueA {
+    static int numPanques; 
+    static double[] profundidades; 
+
+    
+    private static class Nodo implements Comparable<Nodo> {
+        double costo;
+        double heuristica;  
+        
+
+        public Nodo(Set<Integer> panques, double costo, double heuristica) {
+            this.costo = costo;
+            this.heuristica = heuristica;
+        }
+        
+        // Método para comparar nodos por el valor de f(n) = g(n) + h(n)
+        public int compareTo(Nodo otro) {
+            return Double.compare(costo + heuristica, otro.costo + otro.heuristica);
+        }
+    }
+
+    private static double heuristica(Set<Integer> panques) {
+     
+        double heuristica = 0;
+        for (int i = 1; i <= numPanques; i++) {
+            if (!panques.contains(i)) {
+                heuristica += profundidades[i-1];
+            }
+        }
+        return heuristica;
+    }
+    
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Ingrese el número de panques: ");
+        numPanques = input.nextInt();
+        profundidades = new double[numPanques];
+        
+        for (int i = 0; i < numPanques; i++) {
+            System.out.print("Ingrese la profundidad del panque #" + (i+1) + ": ");
+            profundidades[i] = input.nextDouble();
+        }
+
+        Set<Integer> panquesInicio = new HashSet<>();
+        Nodo inicio = new Nodo(panquesInicio, 0, heuristica(panquesInicio));
+        
+        Set<Integer> panquesDestino = new HashSet<>();
+        for (int i = 1; i <= numPanques; i++) {
+            panquesDestino.add(i);
+        }
+        Nodo destino = new Nodo(panquesDestino, 0, 0);
+    }
+}
