@@ -1,0 +1,67 @@
+package panques;
+
+import java.util.*;
+
+public class PanquesIDA {
+    
+    private static class Nodo implements Comparable<Nodo> {
+        Set<Integer> panques;  
+        double costo;  
+        double heuristica;  
+
+       
+        public Nodo(Set<Integer> panques, double costo, double heuristica) {
+            this.panques = panques;
+            this.costo = costo;
+            this.heuristica = heuristica;
+        }
+
+        // Método para comparar nodos por el valor de f(n) = g(n) + h(n)
+        public int compareTo(Nodo otro) {
+            return Double.compare(costo + heuristica, otro.costo + otro.heuristica);
+        }
+    }
+
+    private static int numPanques; 
+    private static int[] profundidades; 
+    private static Set<Integer> panquesDestino;  
+    private static Nodo inicio; 
+    private static int numCasos; 
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        numCasos = scanner.nextInt();
+
+        for (int caso = 1; caso <= numCasos; caso++) {
+            numPanques = scanner.nextInt();
+            profundidades = new int[numPanques];
+            for (int i = 0; i < numPanques; i++) {
+                profundidades[i] = scanner.nextInt();
+            }
+
+            panquesDestino = new HashSet<>();
+            for (int i = 1; i <= numPanques; i++) {
+                panquesDestino.add(i);
+            }
+
+            Set<Integer> panquesInicio = new HashSet<>();
+
+
+
+            double costoMinimo = idaEstrella();
+
+            System.out.println("Case " + caso + ": " + (int)costoMinimo); 
+
+    private static double idaEstrella() {
+        double limite = inicio.heuristica;
+        while (true) {
+            double resultado = busquedaProfundidad(inicio, 0, limite);
+            if (resultado == -1) {
+                return Double.POSITIVE_INFINITY;
+            }
+            if (resultado < limite) {
+                return resultado;
+            }
+            limite = resultado;
+        }
