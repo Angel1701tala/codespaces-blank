@@ -1,0 +1,28 @@
+import java.util.Scanner;
+
+public class Panques {
+   public static void main(String[] args) {
+      Scanner input = new Scanner(System.in);
+      System.out.print("Ingrese la cantidad de panques: ");
+      int numPanques = input.nextInt();
+      double[] profundidades = new double[numPanques];
+
+      for (int i = 0; i < numPanques; i++) {
+         System.out.print("Ingrese la profundidad del panque #" + (i+1) + ": ");
+         profundidades[i] = input.nextDouble();
+      }
+      
+      double maxProfundidad = profundidades[0];
+      for (int i = 1; i < numPanques; i++) {
+         if (profundidades[i] > maxProfundidad) {
+            maxProfundidad = profundidades[i];
+         }
+      }
+      
+      for (int i = 0; i < numPanques; i++) {
+         if (profundidades[i] == maxProfundidad) {
+            System.out.println("El panque #" + (i+1) + " tiene la mayor profundidad de " + maxProfundidad + " pulgadas.");
+         }
+      }
+   }
+}
