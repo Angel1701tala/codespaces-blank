@@ -1,0 +1,74 @@
+import java.util.*;
+
+public class PanquesIDA {
+    private static class Estado implements Comparable<Estado> {
+        char[] letras;
+        int costo;
+        int heuristica;
+        Estado padre;
+        
+        Estado(char[] letras, int costo, int heuristica, Estado padre) {
+            this.letras = letras;
+            this.costo = costo;
+            this.heuristica = heuristica;
+            this.padre = padre;
+        }
+        
+        int calcularHeuristica() {
+            int h = 0;
+            for (int i = 0; i < letras.length; i++) {
+                int filaActual = i / 3;
+                int columnaActual = i % 3;
+                int filaObjetivo = (letras[i] - 'A') / 3;
+                int columnaObjetivo = (letras[i] - 'A') % 3;
+                h += Math.abs(filaActual - filaObjetivo) + Math.abs(columnaActual - columnaObjetivo);
+            }
+            return h;
+        }
+        
+        List<Estado> generarSucesores() {
+            List<Estado> sucesores = new ArrayList<>();
+            for (int i = 2; i <= letras.length; i++) {
+                char[] nuevaConfig = Arrays.copyOf(letras, letras.length);
+                reverse(nuevaConfig, 0, i - 1);
+                Estado sucesor = new Estado(nuevaConfig, costo + 1, calcularHeuristica(), this);
+                sucesores.add(sucesor);
+            }
+            return sucesores;
+        }
+        
+
+        public int compareTo(Estado otro) {
+            return costo + heuristica - otro.costo - otro.heuristica;
+        }
+    }
+
+    private static void reverse(char[] letras, int inicio, int fin) {
+        while (inicio < fin) {
+            char temp = letras[inicio];
+            letras[inicio] = letras[fin];
+            letras[fin] = temp;
+            inicio++;
+            fin--;
+        }
+    }
+   
+    /**
+     * @param letras
+     * @return
+     */
+    public static int pancakeSortAI(char[] letras) {
+        PriorityQueue<Estado> abiertos = new PriorityQueue<>();
+        Map<String, Integer> cerrados = new HashMap<>();
+        Estado inicial = new Estado(letras, 0, inicial.calcularHeuristica(), null);
+        abiertos.add(inicial);
+        cerrados.put(Arrays.toString(letras), 0);
+        
+        while (!abiertos.isEmpty()) {
+            Estado actual = abiertos.poll();
+            if (esObjetivo(actual.letras)) {
+                int ciclos = actual.costo;
+                imprimirSolucion(actual);
+                return ciclos;
+            }
+            for (Estado sucesor : actual.generarSucesores()) 
