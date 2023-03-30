@@ -1,0 +1,90 @@
+import java.util.*;
+
+public class panqueA {
+    private static class Estado implements Comparable<Estado> {
+        char[] letras;
+        int costo;
+        int heuristica;
+        Estado padre;
+        
+        Estado(char[] letras, int costo, int heuristica, Estado padre) {
+            this.letras = letras;
+            this.costo = costo;
+            this.heuristica = heuristica;
+            this.padre = padre;
+        }
+        
+        int calcularHeuristica() {
+            int h = 0;
+            for (int i = 0; i < letras.length - 1; i++) {
+                if (letras[i] > letras[i + 1]) {
+                    h++;
+                }
+            }
+            return h;
+        }
+        
+        List<Estado> generarSucesores() {
+            List<Estado> sucesores = new ArrayList<>();
+            for (int i = 2; i <= letras.length; i++) {
+                char[] nuevaConfig = Arrays.copyOf(letras, letras.length);
+                reverse(nuevaConfig, 0, i - 1);
+                Estado sucesor = new Estado(nuevaConfig, costo + 1, calcularHeuristica(), this);
+                sucesores.add(sucesor);
+            }
+            return sucesores;
+        }
+        
+        public int compareTo(Estado otro) {
+            return costo + heuristica - otro.costo - otro.heuristica;
+        }
+    }
+    
+    private static void reverse(char[] letras, int inicio, int fin) {
+        while (inicio < fin) {
+            char temp = letras[inicio];
+            letras[inicio] = letras[fin];
+            letras[fin] = temp;
+            inicio++;
+            fin--;
+        }
+    }
+    
+    public static int pancakeSort(char[] letras) {
+        PriorityQueue<Estado> abiertos = new PriorityQueue<>();
+        Set<String> cerrados = new HashSet<>();
+        Estado inicial = new Estado(letras, 0, 0, null);
+        abiertos.add(inicial);
+        
+        while (!abiertos.isEmpty()) {
+            Estado actual = abiertos.poll();
+            if (esObjetivo(actual.letras)) {
+                int ciclos = actual.costo;
+                imprimirSolucion(actual);
+                return ciclos;
+            }
+            cerrados.add(Arrays.toString(actual.letras));
+            for (Estado sucesor : actual.generarSucesores()) {
+                if (!cerrados.contains(Arrays.toString(sucesor.letras))) {
+                    abiertos.add(sucesor);
+                }
+            }
+        }
+        
+        return -1;
+    }
+    
+    private static boolean esObjetivo(char[] letras) {
+        for (int i = 0; i < letras.length - 1; i++) {
+            if (letras[i] > letras[i + 1]) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    private static void imprimirSolucion(Estado estado) {
+        Stack<Estado> pila = new Stack<>();
+        while (estado != null) {
+            pila.push(estado);
+            estado =
