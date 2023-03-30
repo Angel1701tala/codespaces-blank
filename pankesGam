@@ -1,0 +1,48 @@
+import java.util.Arrays;
+
+public class PancakeGame {
+    
+    public static void main(String[] args) {
+        char[] letras = {'D', 'C', 'A', 'B', 'E'};
+        
+        int ciclos = pancakeSort(letras);
+        
+        System.out.println(Arrays.toString(letras));
+        System.out.println("Numero de ciclos Recorridos: " + ciclos);
+    }
+    
+    public static int pancakeSort(char[] letras) {
+        int n = letras.length;
+        int ciclos = 0;
+        
+        for (int i = n - 1; i > 0; i--) {
+            int maxIndex = 0;
+            for (int j = 0; j <= i; j++) {
+                if (letras[j] > letras[maxIndex]) {
+                    maxIndex = j;
+                }
+            }
+   
+            if (maxIndex == i) {
+                continue;
+            }
+            reverse(letras, 0, maxIndex);
+            ciclos++;
+
+            reverse(letras, 0, i);
+            ciclos++;
+        }
+        
+        return ciclos;
+    }
+    
+    private static void reverse(char[] letras, int i, int j) {
+        while (i < j) {
+            char temp = letras[i];
+            letras[i] = letras[j];
+            letras[j] = temp;
+            i++;
+            j--;
+        }
+    }
+}
