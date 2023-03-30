@@ -1,0 +1,79 @@
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class PancakeProfundidadInt {
+    
+    public static void main(String[] args) {
+        // Obtener entrada del usuario
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Ingrese las letras (separadas por comas): ");
+        String entrada = scanner.nextLine();
+        char[] letras = parseInput(entrada);
+        
+        // Ordenar el arreglo de letras
+        int ciclos = pancakeSort(letras);
+        
+        // Imprimir resultado
+        System.out.println("Arreglo ordenado: " + Arrays.toString(letras));
+        System.out.println("Número de ciclos: " + ciclos);
+    }
+    
+    // Función para analizar la entrada del usuario y obtener un arreglo de caracteres
+    private static char[] parseInput(String entrada) {
+        String[] letrasStr = entrada.split(",");
+        char[] letras = new char[letrasStr.length];
+        for (int i = 0; i < letrasStr.length; i++) {
+            letras[i] = letrasStr[i].trim().charAt(0);
+        }
+        return letras;
+    }
+    
+    public static int pancakeSort(char[] letras) {
+        int n = letras.length;
+        int ciclos = 0;
+        
+        for (int i = n - 1; i > 0; i--) {
+            // Encontrar la letra más grande en el subarreglo [0, i]
+            int maxIndex = findMaxIndex(letras, 0, i);
+            
+            // Si la letra más grande ya está en su posición correcta, continuar con el siguiente elemento
+            if (maxIndex == i) {
+                continue;
+            }
+            
+            // Invertir el subarreglo [0, maxIndex]
+            reverse(letras, 0, maxIndex);
+            ciclos++;
+            System.out.println("Estado después del ciclo " + ciclos + ": " + Arrays.toString(letras));
+            
+            // Invertir el subarreglo [0, i]
+            reverse(letras, 0, i);
+            ciclos++;
+            System.out.println("Estado después del ciclo " + ciclos + ": " + Arrays.toString(letras));
+        }
+        
+        return ciclos;
+    }
+    
+    // Función auxiliar para encontrar el índice de la letra más grande en el subarreglo [inicio, fin]
+    private static int findMaxIndex(char[] letras, int inicio, int fin) {
+        int maxIndex = inicio;
+        for (int i = inicio + 1; i <= fin; i++) {
+            if (letras[i] > letras[maxIndex]) {
+                maxIndex = i;
+            }
+        }
+        return maxIndex;
+    }
+    
+    // Función auxiliar para invertir el subarreglo [inicio, fin]
+    private static void reverse(char[] letras, int inicio, int fin) {
+        while (inicio < fin) {
+            char temp = letras[inicio];
+            letras[inicio] = letras[fin];
+            letras[fin] = temp;
+            inicio++;
+            fin--;
+        }
+    }
+}
