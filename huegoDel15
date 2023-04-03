@@ -1,0 +1,78 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.PriorityQueue;
+
+public class JuegoDel15 {
+    private static final int N = 4;
+    private static final int BLANCO = 0;
+    private static final int[][] OBJETIVO = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, BLANCO}};
+    
+    public static void main(String[] args) {
+        int[][] tablero = {{5, 1, 2, 3}, {9, 6, 7, 4}, {13, BLANCO, 11, 8}, {10, 14, 15, 12}}; // Tablero de ejemplo
+        System.out.println("Tablero inicial:");
+        imprimirTablero(tablero);
+        List<int[][]> solucion = encontrarSolucion(tablero);
+        if (solucion != null) {
+            System.out.println("Solución encontrada:");
+            for (int[][] estado : solucion) {
+                imprimirTablero(estado);
+            }
+        } else {
+            System.out.println("No se encontró solución.");
+        }
+    }
+    
+    // Encuentra la solución utilizando el algoritmo A*
+    public static List<int[][]> encontrarSolucion(int[][] tableroInicial) {
+        PriorityQueue<Nodo> frontera = new PriorityQueue<>();
+        frontera.add(new Nodo(tableroInicial, null, 0, distanciaManhattan(tableroInicial)));
+        int[][] actual = null;
+        while (!frontera.isEmpty()) {
+            actual = frontera.poll().estado;
+            if (esObjetivo(actual)) {
+                break;
+            }
+            for (int[][] sucesor : generarSucesores(actual)) {
+                int costo = 1;
+                int distancia = distanciaManhattan(sucesor);
+                frontera.add(new Nodo(sucesor, actual, costo, distancia));
+            }
+        }
+        if (esObjetivo(actual)) {
+            List<int[][]> solucion = new ArrayList<>();
+            while (actual != null) {
+                solucion.add(0, actual);
+                actual = encontrarPadre(solucion.get(0));
+            }
+            return solucion;
+        } else {
+            return null;
+        }
+    }
+    
+    // Verifica si el tablero dado es el objetivo
+    public static boolean esObjetivo(int[][] tablero) {
+        return Arrays.deepEquals(tablero, OBJETIVO);
+    }
+    
+    // Genera todos los posibles sucesores del estado dado
+    public static List<int[][]> generarSucesores(int[][] estado) {
+        List<int[][]> sucesores = new ArrayList<>();
+        int filaBlanco = -1;
+        int columnaBlanco = -1;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if (estado[i][j] == BLANCO) {
+                    filaBlanco = i;
+                    columnaBlanco = j;
+                    break;
+                }
+            }
+            if (filaBlanco != -1) {
+                break;
+            }
+        }
+        if (filaBlanco > 0) {
+            int[][] sucesor = copiarTablero(estado);
+            sucesor[f
